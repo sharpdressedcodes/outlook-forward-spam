@@ -86,13 +86,13 @@ Public Sub ForwardSpamToAuthorities()
             
     Set newMessage.SendUsingAccount = msg.SendUsingAccount
     
-    If LenB(authority) Then
+    If LenB(authority) And Left$(authority, 1) <> "<" Then
       newMessage.Recipients.Add authority
       newMessage.Recipients.ResolveAll
       newMessage.Send
     Else
       If LenB(sender) Then
-        newMessage.Recipients.Add "Spammer: " & sender
+        newMessage.Recipients.Add "Spammer: " & sender & IIf(Left$(authority, 1) = "<", GetString(authority, "<", ">"), vbNullString)
       End If
       newMessage.Display
     End If
@@ -126,6 +126,8 @@ Private Function GetAuthorities() As Collection
   col.Add "com,org,net,edu,gov,mil spam@knujon.net"
   col.Add "com.au,org.au,net.au,edu.au,gov.au,mil.au report@submit.spam.acma.gov.au"
   col.Add "dk int@spamklage.dk"
+  
+  col.Add "fr <Please create an account at http://signalspam.net then submit the spam through the web form>"
   
   Set GetAuthorities = col
 
